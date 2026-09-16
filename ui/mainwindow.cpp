@@ -410,14 +410,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
         },
         DS_cores);
 
-    // Remember system proxy
-    if (NekoGui::dataStore->remember_enable || NekoGui::dataStore->flag_restart_tun_on) {
-        if (NekoGui::dataStore->remember_spmode.contains("system_proxy")) {
-            neko_set_spmode_system_proxy(true, false);
-        }
-        if (NekoGui::dataStore->remember_spmode.contains("vpn") || NekoGui::dataStore->flag_restart_tun_on) {
-            neko_set_spmode_vpn(true, false);
-        }
+    // Restore system proxy mode
+    if (NekoGui::dataStore->remember_spmode.contains("system_proxy")) {
+        neko_set_spmode_system_proxy(true, false);
+    }
+    if (NekoGui::dataStore->remember_spmode.contains("vpn") || NekoGui::dataStore->flag_restart_tun_on) {
+        neko_set_spmode_vpn(true, false);
     }
 
     connect(qApp, &QGuiApplication::commitDataRequest, this, &MainWindow::on_commitDataRequest);
@@ -726,7 +724,7 @@ void MainWindow::neko_set_spmode_system_proxy(bool enable, bool save) {
 
     if (save) {
         NekoGui::dataStore->remember_spmode.removeAll("system_proxy");
-        if (enable && NekoGui::dataStore->remember_enable) {
+        if (enable) {
             NekoGui::dataStore->remember_spmode.append("system_proxy");
         }
         NekoGui::dataStore->Save();
@@ -789,7 +787,7 @@ void MainWindow::neko_set_spmode_vpn(bool enable, bool save) {
 
     if (save) {
         NekoGui::dataStore->remember_spmode.removeAll("vpn");
-        if (enable && NekoGui::dataStore->remember_enable) {
+        if (enable) {
             NekoGui::dataStore->remember_spmode.append("vpn");
         }
         NekoGui::dataStore->Save();
